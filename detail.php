@@ -74,13 +74,24 @@
                         <div class="as-searchnav-placeholder" style="height: 77px;">
                             <div class="row as-search-navbar" id="as-search-navbar" style="width: auto;">
                                 <div class="as-accessories-filter-tile column large-6 small-3">
-
+                                
+                                    <a href="/">
+                                    <button class="as-filter-button" aria-expanded="true" aria-controls="as-search-filters" type="button">
+                                        <h2 class=" as-filter-button-text">
+                                            Catálogo
+                                        </h2>
+                                    </button>
+                                    </a>
+                                    <button class="as-filter-button" aria-expanded="true" aria-controls="as-search-filters" type="button">
+                                        <h2 class=" as-filter-button-text">
+                                            >
+                                        </h2>
+                                    </button>
                                     <button class="as-filter-button" aria-expanded="true" aria-controls="as-search-filters" type="button">
                                         <h2 class=" as-filter-button-text">
                                             Smartphones
                                         </h2>
                                     </button>
-
 
                                 </div>
 
@@ -124,13 +135,67 @@
                                             </h3>
                                         </div>
                                         <h3 >
-                                            <?php echo $_POST['price'] ?>
+                                            <?php echo "$" . $_POST['price'] ?>
                                         </h3>
                                         <h3 >
-                                            <?php echo "$" . $_POST['unit'] ?>
+                                            <?php echo "Cantidad: " . $_POST['unit'] ?>
                                         </h3>
                                     </div>
-                                    <button type="submit" class="mercadopago-button" formmethod="post">Pagar</button>
+                                    <script src="buyml.js"></script>
+                                    <button id="buybtn" onclick="showbuyform()" class="mercadopago-button">
+                                    comprar
+                                    </button>
+                                    <?php
+                                        // SDK de Mercado Pago
+                                        require __DIR__ .  '/vendor/autoload.php';
+
+                                        // Agregar credenciales
+                                        MercadoPago\SDK::setAccessToken('APP_USR-4602243438725450-041621-92cd178c0ebbc1b8b3715bc0f7a3fa69-201062782');
+
+                                        // Creado un objeto de preferencia
+                                        $preference = new MercadoPago\Preference();
+                                        //  Número de orden del pedido (external_reference): ​Deberás indicar aquí tu Correo electrónico, el mismo que usarás para rellenar el formulario del examen (el primero).
+                                        $external_reference = "str3@santiagoinsumos.com.ar";
+                                        // Creado un ítem en la preferencia
+                                        $item = new MercadoPago\Item();
+                                        $item->id = 1234;
+                                        $item->picture_url = $_POST['img'];
+                                        $item->title = $_POST['title'];
+                                        $item->description = "Dispositivo móvil de Tienda e-commerce​";
+                                        $item->quantity = 1;
+                                        $item->unit_price = $_POST['price'];
+                                        $preference->items = array($item);
+                                        $preference->save();
+                                        ?>
+                                    <style>
+                                    #buyform{
+                                        display:none;
+                                    }
+                                    </style>
+                                    <div id="buyform">
+                                    <h2>____________________</h2>
+                                    <form action="/procesar-pago" method="POST">
+                                    <h2>Datos del comprador</h2>
+                                    Nombre y Apellido <input type="text">
+                                    <br>
+                                    E-mail <input type="text">
+                                    <br>
+                                    Código de área <input type="text">
+                                    <br>
+                                    Teléfono <input type="text">
+                                    <h2>Datos de Envío</h2>
+                                    Calle: <input type="text">
+                                    <br>
+                                    Número de Casa: <input type="text">
+                                    <br>
+                                    Código Postal <input type="text">
+                                    <br>
+                                    <script
+                                    src="https://www.mercadopago.com.ar/integrations/v1/web-payment-checkout.js"
+                                    data-preference-id="<?php echo $preference->id; ?>">
+                                    </script>
+                                    </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
